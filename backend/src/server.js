@@ -6,7 +6,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const Event = require("./models/Event");
-const Student = require("./models/Student"); // Add your student schema
+const Student = require("./models/User"); // Add your student schema
 
 const app = express();
 app.use(cors());
@@ -69,28 +69,25 @@ app.delete("/events/:id", async (req, res) => {
 });
 
 // -------- Login API --------
+// Login route
 app.post("/login", async (req, res) => {
   const { registrationNumber, password } = req.body;
 
   if (!registrationNumber || !password) {
-    return res.status(400).json({ success: false, message: "All fields are required" });
+    return res.status(400).json({ success: false, message: "Missing fields" });
   }
 
   try {
-    const student = await Student.findOne({ registrationNumber });
-    if (!student) return res.status(401).json({ success: false, message: "User not found" });
+    const user = await User.findOne({ registrationNumber });
+    if (!user) return res.status(401).json({ success: false, message: "User not found" });
 
-    const isMatch = await bcrypt.compare(password, student.password);
-    if (!isMatch) return res.status(401).json({ success: false, message: "Invalid credentials" });
+    const valid = await bcrypt.compare(password, user.password);
+    if (!valid) return res.status(401).json({ success: false, message: "Incorrect password" });
 
-    // Create JWT token
-    const token = jwt.sign(
-      { id: student._id, regNumber: student.registrationNumber, name: student.name },
-      JWT_SECRET,
-      { expiresIn: "1d" }
-    );
+    // create JWT
+    const token = jwt.sign({ id: user._id, registrationNumber }, process.env.JWT_SECRET, { expiresIn: "1d" });
 
-    res.json({ success: true, token, username: student.name });
+    res.json({ success: true, token, name: user.name });
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: "Server error" });
