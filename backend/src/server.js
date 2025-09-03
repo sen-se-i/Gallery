@@ -2,14 +2,18 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const Event = require("./models/Event");
+const Student = require("./models/Student"); // Add your student schema
 
 const app = express();
-
-// Middleware
 app.use(cors());
 app.use(express.json());
+
+// JWT secret
+const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key_here";
 
 // Connect MongoDB
 async function connectDB() {
@@ -63,6 +67,50 @@ app.delete("/events/:id", async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 });
+
+// -------- Login API --------
+app.post("/login", async (req, res) => {
+  const { registrationNumber, password } = req.body;
+
+  if (!registrationNumber || !password) {
+    return res.status(400).json({ success: false, message: "All fields are required" });
+  }
+
+  try {
+    const student = await Student.findOne({ registrationNumber });
+    if (!student) return res.status(401).json({ success: false, message: "User not found" });
+
+    const isMatch = await bcrypt.compare(password, student.password);
+    if (!isMatch) return res.status(401).json({ success: false, message: "Invalid credentials" });
+
+    // Create JWT token
+    const token = jwt.sign(
+      { id: student._id, regNumber: student.registrationNumber, name: student.name },
+      JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+
+    res.json({ success: true, token, username: student.name });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+// -------- Middleware to verify JWT for protected routes --------
+function verifyToken(req, res, next) {
+  const token = req.headers["authorization"]?.split(" ")[1];
+  if (!token) return res.status(401).json({ success: false, message: "No token provided" });
+
+  jwt.verify(token, JWT_SECRET, (err, decoded) => {
+    if (err) return res.status(401).json({ success: false, message: "Invalid token" });
+    req.user = decoded;
+    next();
+  });
+}
+
+// Example of protecting events POST route
+// app.post("/events", verifyToken, async (req, res) => { ... });
 
 // Start server
 const PORT = process.env.PORT || 4000;
