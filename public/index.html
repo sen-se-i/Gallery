@@ -6,133 +6,38 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap');
 
-body {
-  font-family: Arial, sans-serif;
-  margin: 20px;
-  background-color: #DDDDDD;
-}
+body { font-family: Arial, sans-serif; margin: 20px; background-color: #DDDDDD; }
+h1 { text-align: center; font-family: 'Luckiest Guy', cursive; color: #FF7443; font-size: 2.2em; margin-bottom: 20px; -webkit-text-stroke: 2px #2A3D4B; }
 
-/* --- Heading --- */
-h1 {
-  text-align: center;
-  font-family: 'Luckiest Guy', cursive;
-  color: #FF7443;
-  font-size: 2.2em;
-  margin-bottom: 20px;
-  -webkit-text-stroke: 2px #2A3D4B;
-}
-
-/* --- Calendar --- */
 .calendar-container { text-align: center; margin-bottom:20px; }
 table { border-collapse: collapse; width: 100%; table-layout: fixed; }
-th, td {
-  border: 1px solid #2A3D4B;
-  text-align: center;
-  padding: 10px;
-  min-width: 100px;
-  background-color: #FF7443;
-  color: #2A3D4B;
-  font-size: 0.85em;
-}
-th {
-  background-color: #2A3D4B;
-  color: #DDDDDD;
-}
+th, td { border: 1px solid #2A3D4B; text-align: center; padding: 10px; min-width: 100px; background-color: #FF7443; color: #2A3D4B; font-size: 0.85em; }
+th { background-color: #2A3D4B; color: #DDDDDD; }
 td.mine { background-color: #447991; color: #000000; }
 td.empty { background-color: #DDDDDD; }
 
 td { position: relative; transition: all 0.3s ease; }
 td:hover { transform: scale(1.05); box-shadow: 0 6px 15px rgba(0,0,0,0.25); z-index: 2; }
-/* Remove this old rule:
-td:hover::after { ... }
-*/
+body.edit-mode td:hover::after { content: "＋"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.5em; color: #447991; pointer-events: none; }
 
-/* New rule */
-body.edit-mode td:hover::after {
-  content: "＋";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 1.5em;
-  color: #447991;
-  pointer-events: none;
-}
-
-
-/* --- Nav Buttons --- */
 .nav-buttons { margin-bottom: 15px; }
-.nav-buttons button {
-  padding: 8px 15px; border-radius: 12px; border: none;
-  background: linear-gradient(90deg, #2A3D4B, #447991);
-  color: #fff; cursor: pointer; font-weight: bold;
-  transition: all 0.4s ease, background-position 0.4s ease;
-  background-size: 200% 100%; background-position: left;
-}
-.nav-buttons button:hover {
-  transform: scale(1.08); background-position: right;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
-}
+.nav-buttons button { padding: 8px 15px; border-radius: 12px; border: none; background: linear-gradient(90deg, #2A3D4B, #447991); color: #fff; cursor: pointer; font-weight: bold; transition: all 0.4s ease, background-position 0.4s ease; background-size: 200% 100%; background-position: left; }
+.nav-buttons button:hover { transform: scale(1.08); background-position: right; box-shadow: 0 6px 18px rgba(0,0,0,0.25); }
 
-/* --- Update/Save Button --- */
-.update-btn-container {
-  margin-top: 25px;
-}
-#editSaveBtn {
-  padding: 10px 20px;
-  border-radius: 12px;
-  border: none;
-  background: linear-gradient(90deg, #2A3D4B, #447991);
-  color: #fff;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.4s ease;
-}
-#editSaveBtn:hover {
-  transform: scale(1.08);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
-}
+.update-btn-container { margin-top: 25px; }
+#editSaveBtn { padding: 10px 20px; border-radius: 12px; border: none; background: linear-gradient(90deg, #2A3D4B, #447991); color: #fff; font-weight: bold; cursor: pointer; transition: all 0.4s ease; }
+#editSaveBtn:hover { transform: scale(1.08); box-shadow: 0 6px 18px rgba(0,0,0,0.25); }
 
-/* --- Modal --- */
-.modal {
-  display: none; position: fixed; z-index: 1000;
-  left:0; top:0; width:100%; height:100%;
-  background-color: rgba(0,0,0,0.3);
-}
-.modal-content {
-  background: linear-gradient(135deg, #2A3D4B, #447991);
-  color: #fff;
-  border-radius: 12px;
-  max-width: 400px;
-  margin: 10% auto;
-  padding: 20px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.3);
-  transform: scale(0.8);
-  opacity: 0;
-  transition: all 0.4s ease;
-}
+.modal { display: none; position: fixed; z-index: 1000; left:0; top:0; width:100%; height:100%; background-color: rgba(0,0,0,0.3); }
+.modal-content { background: linear-gradient(135deg, #2A3D4B, #447991); color: #fff; border-radius: 12px; max-width: 400px; margin: 10% auto; padding: 20px; box-shadow: 0 6px 18px rgba(0,0,0,0.3); transform: scale(0.8); opacity: 0; transition: all 0.4s ease; }
 .modal-content h3 { text-align:center; margin-bottom:10px; }
 .modal-content label { display:block; margin-top:10px; font-weight:bold; }
-.modal-content select {
-  width: 100%; padding:5px; margin-top:5px;
-  border-radius:8px; border:1px solid #2A3D4B;
-}
-
-.gallery-options {
-  display:flex; justify-content:space-around; margin-top:10px;
-}
-.gallery-options div {
-  padding:10px 20px; border:2px solid #fff;
-  border-radius:12px; cursor:pointer;
-}
+.modal-content select { width: 100%; padding:5px; margin-top:5px; border-radius:8px; border:1px solid #2A3D4B; }
+.gallery-options { display:flex; justify-content:space-around; margin-top:10px; }
+.gallery-options div { padding:10px 20px; border:2px solid #fff; border-radius:12px; cursor:pointer; }
 .gallery-options .selected { border-color: #FF7443; background-color:#DDDDDD; color:#2A3D4B; }
-
 .modal.show .modal-content { transform: scale(1); opacity: 1; }
-
-.modal-content button {
-  margin-top: 15px; width:48%; padding:8px;
-  border-radius:10px; border:none; font-weight:bold; cursor:pointer;
-}
+.modal-content button { margin-top: 15px; width:48%; padding:8px; border-radius:10px; border:none; font-weight:bold; cursor:pointer; }
 #saveEventBtn { background-color:#28a745; color:#fff; }
 #cancelEventBtn { background-color:#dc3545; color:#fff; }
 </style>
@@ -181,63 +86,43 @@ body.edit-mode td:hover::after {
 </div>
 
 <script>
+  
+// ====== Login check ======
+const storedUser = localStorage.getItem("currentUser");
+if (!storedUser) {
+  // Not logged in, redirect to login page
+  window.location.href = "login.html";
+} 
+const currentUser = storedUser; // use for the rest of your script
+
+// ====== Calendar variables ======
 const dateRow=document.getElementById("dateRow");
 const calendarBody=document.getElementById("calendarBody");
 const editSaveBtn=document.getElementById("editSaveBtn");
 
 const startHour=9,endHour=17,daysToShow=10;
 let offsetDays=0,today=new Date().toDateString();
-let editMode=false,currentUser="user1";
+let editMode=false;
 let events={};
 
-// === Backend API URL ===
-const API_URL = "https://gallery-ih27.onrender.com/events"; // replace with Render URL later
 
-// Load all events from DB
-async function loadEvents() {
-  try {
-    const res = await fetch(API_URL);
-    const data = await res.json();
-    events = {};
-    data.forEach(ev => {
-      if (!events[ev.dateKey]) events[ev.dateKey] = [];
-      events[ev.dateKey].push(ev);
-    });
-    renderCalendar();
-  } catch (err) {
-    console.error("Failed to load events:", err);
-  }
-}
+const API_URL = "https://gallery-ih27.onrender.com/events"; // backend
 
-// Save new event to DB
-async function saveEvent(event) {
-  try {
-    const res = await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(event),
-    });
-    return await res.json();
-  } catch (err) {
-    console.error("Failed to save event:", err);
-  }
-}
+// Fill batch dropdown
+const batchSelect=document.getElementById("batchSelect");
+for(let y=24;y>=18;y--){ let opt=document.createElement("option"); opt.text=`${y}-${y+1}`; batchSelect.add(opt); }
 
+// Modal elements
 const modal=document.getElementById("eventModal");
 const deptSelect=document.getElementById("deptSelect");
-const batchSelect=document.getElementById("batchSelect");
 const eventSelect=document.getElementById("eventSelect");
 const saveEventBtn=document.getElementById("saveEventBtn");
 const cancelBtn=document.getElementById("cancelEventBtn");
 let gallery1=document.getElementById("gallery1");
 let gallery2=document.getElementById("gallery2");
-
 let currentKey=null, selectedGallery=null;
 
-// Fill batch dropdown
-for(let y=24;y>=18;y--){ let opt=document.createElement("option"); opt.text=`${y}-${y+1}`; batchSelect.add(opt); }
-
-// Formatters
+// ====== Formatters ======
 function formatTime(hour){
   let ampm=hour>=12?"PM":"AM";
   let h=hour>12?hour-12:hour; if(h===0) h=12;
@@ -245,14 +130,16 @@ function formatTime(hour){
 }
 function formatDate(date){ return date.toLocaleDateString("en-US",{month:"short",day:"numeric"}); }
 
-// Render calendar
+// ====== Render calendar ======
 function renderCalendar(){
-  let startDate=new Date(); startDate.setHours(0,0,0,0); startDate.setDate(startDate.getDate()+offsetDays);
-  dateRow.innerHTML="<th>Time</th>"; calendarBody.innerHTML=""; let dates=[];
+  const startDate=new Date(); startDate.setHours(0,0,0,0); startDate.setDate(startDate.getDate()+offsetDays);
+  dateRow.innerHTML="<th>Time</th>"; calendarBody.innerHTML="";
+  let dates=[];
   for(let i=0;i<daysToShow;i++){
     const d=new Date(startDate); d.setDate(d.getDate()+i); dates.push(d);
     const th=document.createElement("th"); th.textContent=formatDate(d); dateRow.appendChild(th);
   }
+
   for(let hour=startHour;hour<endHour;hour++){
     const tr=document.createElement("tr");
     const timeCell=document.createElement("td"); timeCell.textContent=formatTime(hour); tr.appendChild(timeCell);
@@ -277,14 +164,28 @@ function renderCalendar(){
           else alert("You can only edit your own events.");
         });
       }
-      
+
       tr.appendChild(td);
     }
     calendarBody.appendChild(tr);
   }
 }
 
-// Modal handling
+// ====== Load events ======
+async function loadEvents(){
+  try{
+    const res=await fetch(API_URL);
+    const data=await res.json();
+    events={};
+    data.forEach(ev=>{
+      if(!events[ev.dateKey]) events[ev.dateKey]=[];
+      events[ev.dateKey].push(ev);
+    });
+    renderCalendar();
+  }catch(err){ console.error(err); }
+}
+
+// ====== Modal ======
 function openModal(key){
   currentKey=key; selectedGallery=null;
   deptSelect.value=""; batchSelect.value=""; eventSelect.value="";
@@ -295,80 +196,60 @@ function openModal(key){
   gallery2.style.display = existing.find(ev=>ev.gallery==="Gallery 2") ? "none":"block";
 
   modal.style.display="block";
-  setTimeout(()=> modal.classList.add("show"), 10);
+  setTimeout(()=> modal.classList.add("show"),10);
 }
-cancelBtn.onclick=()=>{
-  modal.classList.remove("show");
-  setTimeout(()=> modal.style.display="none", 300);
-};
-window.onclick=(e)=>{ 
-  if(e.target===modal){
-    modal.classList.remove("show");
-    setTimeout(()=> modal.style.display="none", 300);
-  }
-};
 
-// Gallery selection
+cancelBtn.onclick=()=>{ modal.classList.remove("show"); setTimeout(()=> modal.style.display="none",300); };
+window.onclick=(e)=>{ if(e.target===modal){ modal.classList.remove("show"); setTimeout(()=> modal.style.display="none",300); } };
+
 gallery1.onclick=()=>{ selectedGallery="Gallery 1"; gallery1.classList.add("selected"); gallery2.classList.remove("selected"); };
 gallery2.onclick=()=>{ selectedGallery="Gallery 2"; gallery2.classList.add("selected"); gallery1.classList.remove("selected"); };
 
-// Save inside modal
-saveEventBtn.onclick=()=>{
+// ====== Save event ======
+saveEventBtn.onclick=async()=>{
   if(!deptSelect.value || !batchSelect.value || !eventSelect.value || !selectedGallery){
     alert("Please fill all fields!"); return;
   }
   if(!events[currentKey]) events[currentKey]=[];
 
   const newEvent = {
-  dateKey: currentKey,
-  dept: deptSelect.value,
-  batch: batchSelect.value,
-  eventType: eventSelect.value,
-  gallery: selectedGallery,
-  user: currentUser
+    dateKey: currentKey,
+    dept: deptSelect.value,
+    batch: batchSelect.value,
+    eventType: eventSelect.value,
+    gallery: selectedGallery,
+    user: currentUser
+  };
+
+  // Save locally
+  events[currentKey].push(newEvent);
+  renderCalendar();
+
+  // Save to backend
+  await fetch(API_URL,{method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(newEvent)});
+
+  // Close modal
+  modal.classList.remove("show"); setTimeout(()=> modal.style.display="none",300);
 };
-}
 
-// Save locally
-events[currentKey].push(newEvent);
-
-// Save to backend
-saveEvent(newEvent);
-
-modal.classList.remove("show");
-setTimeout(()=> modal.style.display="none", 300);
-renderCalendar();
-
- 
-
-// Navigation
+// ====== Navigation ======
 document.getElementById("prevBtn").onclick=()=>{ offsetDays-=daysToShow; renderCalendar(); };
 document.getElementById("nextBtn").onclick=()=>{ offsetDays+=daysToShow; renderCalendar(); };
 
-// Toggle edit/save
+// ====== Toggle edit/save ======
 editSaveBtn.onclick=()=>{
   editMode=!editMode;
-  if(editMode){
-    editSaveBtn.textContent="Save Updates";
-    document.body.classList.add("edit-mode");
-  } else {
-    editSaveBtn.textContent="Update Events";
-    document.body.classList.remove("edit-mode");
-    alert("Your events have been saved!");
-  } 
+  if(editMode){ editSaveBtn.textContent="Save Updates"; document.body.classList.add("edit-mode"); }
+  else{ editSaveBtn.textContent="Update Events"; document.body.classList.remove("edit-mode"); alert("Your events have been saved!"); }
   renderCalendar();
-  
 };
 
-
-
-
-// Auto refresh daily
+// ====== Auto refresh daily ======
 setInterval(()=>{ const now=new Date().toDateString(); if(now!==today){ today=now; offsetDays=0; renderCalendar(); } },60000);
 
+// Initial render
+renderCalendar();
 loadEvents();
-
- 
 </script>
 </body>
 </html>
