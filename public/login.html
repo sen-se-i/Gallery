@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Login</title>
+<style>
+body {
+  margin:0; padding:0;
+  font-family: Arial, sans-serif;
+  background: #f6f3f1;
+  display:flex; justify-content:center; align-items:center; height:100vh;
+}
+
+.login-container {
+  background: #DDCFE4; /* light purple */
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  text-align:center;
+}
+
+.login-container h2 {
+  color:#2C3E50; /* slate blue */
+  margin-bottom:20px;
+}
+
+.login-container input {
+  width:220px;
+  padding:10px;
+  margin:10px 0;
+  border-radius:8px;
+  border:1px solid #2C3E50;
+}
+
+.login-container button {
+  padding:10px 20px;
+  border:none;
+  border-radius:12px;
+  background-color:#1B2B3A; /* dark blue */
+  color:#fff;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.login-container button:hover { background-color:#2C3E50; }
+
+</style>
+</head>
+<body>
+
+<div class="login-container">
+  <h2>Login</h2>
+  <input type="text" id="regNumber" placeholder="Registration Number"><br>
+  <input type="password" id="password" placeholder="Password"><br>
+  <button id="loginBtn">Login</button>
+</div>
+
+<script>
+document.getElementById("loginBtn").addEventListener("click",()=>{
+  const reg = document.getElementById("regNumber").value;
+  const pass = document.getElementById("password").value;
+  if(reg==="123456" && pass==="1234"){
+    // redirect to calendar page
+    window.location.href = "index.html";
+  } else alert("Invalid credentials!");
+});
+</script>
+
+</body>
+</html>
