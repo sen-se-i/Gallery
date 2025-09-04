@@ -6,7 +6,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const Event = require("./models/Event");
-const Student = require("./models/User"); // Add your student schema
+const Student = require("./models/User"); // your student schema
 
 const app = express();
 app.use(cors());
@@ -36,8 +36,6 @@ app.get("/health", (req, res) => {
 });
 
 // -------- Events API --------
-
-// Get all events
 app.get("/events", async (req, res) => {
   try {
     const events = await Event.find().lean();
@@ -47,7 +45,6 @@ app.get("/events", async (req, res) => {
   }
 });
 
-// Save new event
 app.post("/events", async (req, res) => {
   try {
     const event = await Event.create(req.body);
@@ -57,7 +54,6 @@ app.post("/events", async (req, res) => {
   }
 });
 
-// Delete event
 app.delete("/events/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -69,32 +65,35 @@ app.delete("/events/:id", async (req, res) => {
 });
 
 // -------- Login API --------
-// Login route
 app.post("/login", async (req, res) => {
-  const { registrationNumber, password } = req.body;
+  const { regNumber, password } = req.body;
 
-  if (!registrationNumber || !password) {
+  if (!regNumber || !password) {
     return res.status(400).json({ success: false, message: "Missing fields" });
   }
 
   try {
-    const user = await User.findOne({ registrationNumber });
+    const user = await Student.findOne({ regNumber });
     if (!user) return res.status(401).json({ success: false, message: "User not found" });
 
-    const valid = await bcrypt.compare(password, user.password);
+    const valid = await bcrypt.compare(password, user.passwordHash);
     if (!valid) return res.status(401).json({ success: false, message: "Incorrect password" });
 
     // create JWT
-    const token = jwt.sign({ id: user._id, registrationNumber }, process.env.JWT_SECRET, { expiresIn: "1d" });
+    const token = jwt.sign(
+      { id: user._id, regNumber },
+      JWT_SECRET,
+      { expiresIn: "1d" }
+    );
 
-    res.json({ success: true, token, name: user.name });
+    res.json({ success: true, token, username: user.username });
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: "Server error" });
   }
 });
 
-// -------- Middleware to verify JWT for protected routes --------
+// -------- Middleware to verify JWT --------
 function verifyToken(req, res, next) {
   const token = req.headers["authorization"]?.split(" ")[1];
   if (!token) return res.status(401).json({ success: false, message: "No token provided" });
@@ -105,9 +104,6 @@ function verifyToken(req, res, next) {
     next();
   });
 }
-
-// Example of protecting events POST route
-// app.post("/events", verifyToken, async (req, res) => { ... });
 
 // Start server
 const PORT = process.env.PORT || 4000;
